@@ -9,5 +9,5 @@ app.use(express.json());
 app.use('/api/expenses', expensesRouter);
 
 app.listen(PORT, () => {
-    console.log('corriendo en el puerto', PORT);
+    console.log('Servidor iniciado en el puerto', PORT);
 })

@@ -10,20 +10,28 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  expenses  Expense[]
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String
+  expenses Expense[]
 }
 
 model Expense {
-  id         Int       @id @default(autoincrement())
-  amount     Float
-  category   String
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  deleted    Boolean   @default(false)
-  userId     Int
-  user       User      @relation(fields: [userId], references: [id])
+  id          Int             @id @default(autoincrement())
+  amount      Float
+  category    ExpenseCategory @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  description String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  deleted     Boolean         @default(false)
+  userId      Int
+  user        User            @relation(fields: [userId], references: [id])
+}
+
+model ExpenseCategory {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  expenses  Expense[]
 }
