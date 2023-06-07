@@ -3,7 +3,7 @@ import { expensesRouter } from './routes/expensesRoutes';
 import { usersRouter } from './routes/usersRoutes';
 import { categoriesRouter } from './routes/categoriesRoutes';
 
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 8080
 const app = express();
 
 app.use(express.json());

@@ -4,6 +4,8 @@ CREATE TABLE `User` (
     `name` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `deleted` BOOLEAN NOT NULL DEFAULT false,
 
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
@@ -13,7 +15,7 @@ CREATE TABLE `User` (
 CREATE TABLE `Expense` (
     `id` VARCHAR(191) NOT NULL,
     `amount` DOUBLE NOT NULL,
-    `categoryId` INTEGER NOT NULL,
+    `categoryId` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -25,8 +27,9 @@ CREATE TABLE `Expense` (
 
 -- CreateTable
 CREATE TABLE `ExpenseCategory` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
+    `deleted` BOOLEAN NOT NULL DEFAULT false,
 
     UNIQUE INDEX `ExpenseCategory_name_key`(`name`),
     PRIMARY KEY (`id`)

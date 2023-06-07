@@ -15,23 +15,26 @@ model User {
   email    String   @unique
   password String
   expenses Expense[]
+  createdAt   DateTime           @default(now())
+  deleted     Boolean         @default(false)
 }
 
 model Expense {
   id          String             @id
   amount      Float
-  category    ExpenseCategory @relation(fields: [categoryId], references: [id])
-  categoryId  Int
+  category    ExpenseCategory    @relation(fields: [categoryId], references: [id])
+  categoryId  String             
   description String?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  deleted     Boolean         @default(false)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  deleted     Boolean            @default(false)
   userId      String
-  user        User            @relation(fields: [userId], references: [id])
+  user        User               @relation(fields: [userId], references: [id])
 }
 
 model ExpenseCategory {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  expenses  Expense[]
+  id          String             @id
+  name        String             @unique
+  expenses    Expense[]
+  deleted     Boolean         @default(false)
 }

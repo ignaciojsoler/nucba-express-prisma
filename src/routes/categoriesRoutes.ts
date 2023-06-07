@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createCategory,
+  deleteCategory,
   getCategories,
   getCategoryById,
 } from "../controllers/categoriesControllers";
@@ -29,3 +30,7 @@ categoriesRouter.put("/:id", [
   check("id", "El id noes válido").isUUID(),
   check("id"),
 ]);
+
+categoriesRouter.delete('/:id', [
+  check("id").notEmpty()
+], deleteCategory)
