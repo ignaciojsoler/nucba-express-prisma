@@ -14,6 +14,21 @@ export const getCategories = async (req: Request, res: Response) => {
     }
 }
 
+export const getCategoryById = async (req: Request, res: Response) => {
+    const categoryId = parseInt(req.params.id);
+    try {
+        const result = await prisma.expenseCategory.findUnique({
+            where: {
+                id: categoryId
+            }
+        })
+        res.json(result);
+    }
+    catch(e) {
+        throw new Error('No se han podido obtener las categorías');
+    }
+}
+
 export const createCategory = async (req: Request, res: Response) => {
     const newCategory: Category = req.body;
     try {
