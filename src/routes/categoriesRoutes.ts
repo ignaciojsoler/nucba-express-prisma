@@ -3,7 +3,8 @@ import {
   createCategory,
   deleteCategory,
   getCategories,
-  getCategoryById,
+  getCategoryByName,
+  updateCateogry,
 } from "../controllers/categoriesControllers";
 import { check } from "express-validator";
 import { validateFields } from "../middlewares/validateFields";
@@ -12,7 +13,7 @@ export const categoriesRouter = Router();
 
 categoriesRouter.get("/", getCategories);
 
-categoriesRouter.get("/:id", getCategoryById);
+categoriesRouter.get("/:name", getCategoryByName);
 
 categoriesRouter.post(
   "/",
@@ -25,12 +26,6 @@ categoriesRouter.post(
   createCategory
 );
 
-//Pendiente
-categoriesRouter.put("/:id", [
-  check("id", "El id noes válido").isUUID(),
-  check("id"),
-]);
+categoriesRouter.put("/:id", updateCateogry);
 
-categoriesRouter.delete('/:id', [
-  check("id").notEmpty()
-], deleteCategory)
+categoriesRouter.delete('/:id', deleteCategory)

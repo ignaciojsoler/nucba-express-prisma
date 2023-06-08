@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { PrismaClient, ExpenseCategory } from "@prisma/client";
-import { Category } from "../models/types";
 import { v4 } from "uuid";
 
 const prisma = new PrismaClient();
@@ -10,89 +9,107 @@ const uuid = v4();
 export const getCategories = async (req: Request, res: Response) => {
   try {
     const result = await prisma.expenseCategory.findMany({
-        where: {
-            deleted: false
-        }
+      where: {
+        deleted: false,
+      },
     });
     res.json(result);
   } catch (e) {
-    throw new Error("No se han podido obtener las categorías");
+    res.status(400).json({
+      msg: "No se han podido obtener las categorías.",
+    });
   }
 };
 
-//Get by id
-export const getCategoryById = async (req: Request, res: Response) => {
-  const categoryId = req.params.id;
+//Get by name
+export const getCategoryByName = async (req: Request, res: Response) => {
+  const { name } = req.params;
   try {
     const result = await prisma.expenseCategory.findUnique({
       where: {
-        id: categoryId,
+        name: name.toLocaleUpperCase(),
       },
     });
-    res.json(result ?? 'No existe ninguna catoegoría con ese id');
+    res.json(result ?? "No existe ninguna categoría con ese nombre.");
   } catch (e) {
-    throw new Error("No se han podido obtener las categorías");
+    res.status(400).json({
+      msg: "No se han podido obtener las categorías.",
+    });
   }
 };
 
 //Create
 export const createCategory = async (req: Request, res: Response) => {
-  const newCategory: Category = req.body;
+  const newCategory: ExpenseCategory = req.body;
   try {
     const categoryDB = await prisma.expenseCategory.findUnique({
       where: {
-        name: newCategory.name,
+        name: newCategory.name.toLocaleUpperCase(),
       },
     });
 
     if (categoryDB)
       return res.status(400).json({
-        msg: `La categoría ${categoryDB.name} ya existe`,
+        msg: `La categoría ${categoryDB.name} ya existe.`,
       });
 
     const result = await prisma.expenseCategory.create({
       data: {
         id: uuid,
-        name: newCategory.name,
+        name: newCategory.name.toLocaleUpperCase(),
       },
     });
     res.json(result);
   } catch (e) {
-    throw new Error("No se ha podido agregar la categoría");
+    res.status(400).json({
+      msg: "No se ha podido agregar la categoría.",
+    });
   }
 };
 
 //Update
-export const updateCateogry = () => {};
+export const updateCateogry = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const category: ExpenseCategory = req.body;
+  if (!id) return res.status(400).json({msg: 'Ingresar un ID es obligatorio'});
+  try {
+    const result = await prisma.expenseCategory.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name: category.name.toLocaleUpperCase(),
+        deleted: category.deleted
+      },
+    });
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({
+      msg: "No se ha podido actualizar la categoría. Es posible que el ID proporcionado sea incorrecto.",
+    });
+  }
+};
 
 //Delete
 export const deleteCategory = async (req: Request, res: Response) => {
-  const categoryId = req.params.id;
+  const { id } = req.params;
+  if (!id) return res.status(400).json({msg: 'Ingresar un ID es obligatorio'});
   try {
-    const categoryDB = await prisma.expenseCategory.findUnique({
+    const result = await prisma.expenseCategory.update({
       where: {
-        id: categoryId,
+        id: id,
+      },
+      data: {
+        deleted: true,
       },
     });
-
-    if (!categoryDB)
-      return res.status(400).json({
-        msg: `El id ${categoryId} no existe para ninguna categoría`,
-    });
-
-    const result = await prisma.expenseCategory.update({
-        where: {
-            id: categoryId
-        },
-        data: {
-            deleted: true
-        }
-    });
     res.json({
-        msg: 'Categoría eliminada',
-        result
+      msg: "Categoría eliminada.",
+      result,
     });
   } catch (e) {
-    throw new Error("No se han podido obtener las categorías");
+    res.status(400).json({
+      msg: "No existe ninguna categoría con ese id.",
+    });
   }
 };
