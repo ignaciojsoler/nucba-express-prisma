@@ -26,6 +26,14 @@ categoriesRouter.post(
   createCategory
 );
 
-categoriesRouter.put("/:id", updateCateogry);
+categoriesRouter.put(
+  "/:id",
+  [check("id", "El ID ingresado no es válido").isMongoId(), validateFields],
+  updateCateogry
+);
 
-categoriesRouter.delete('/:id', deleteCategory)
+categoriesRouter.delete(
+  "/:id",
+  [check("id", "El ID ingresado no es válido").isMongoId(), validateFields],
+  deleteCategory
+);
