@@ -28,12 +28,12 @@ categoriesRouter.post(
 
 categoriesRouter.put(
   "/:id",
-  [check("id", "El ID ingresado no es válido").isMongoId(), validateFields],
+  [check("id", "El ID ingresado no es válido").isUUID(), validateFields],
   updateCateogry
 );
 
 categoriesRouter.delete(
   "/:id",
-  [check("id", "El ID ingresado no es válido").isMongoId(), validateFields],
+  [check("id", "El ID ingresado no es válido").isUUID(), validateFields],
   deleteCategory
 );

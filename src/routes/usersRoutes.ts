@@ -13,7 +13,7 @@ usersRouter.get("/", getUsers);
 
 usersRouter.get(
   "/:id",
-  [check("id", "El ID ingresado no es válido").isMongoId(), validateFields],
+  [check("id", "El ID ingresado no es válido").isUUID(), validateFields],
   getUserById
 );
 
