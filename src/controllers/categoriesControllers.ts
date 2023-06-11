@@ -16,7 +16,7 @@ export const getCategories = async (req: Request, res: Response) => {
     res.json(result);
   } catch (e) {
     res.status(400).json({
-      msg: "No se han podido obtener las categorías.",
+      error: "No se han podido obtener las categorías.",
     });
   }
 };
@@ -33,7 +33,7 @@ export const getCategoryByName = async (req: Request, res: Response) => {
     res.json(result ?? "No existe ninguna categoría con ese nombre.");
   } catch (e) {
     res.status(400).json({
-      msg: "No se han podido obtener las categorías.",
+      error: "No se han podido obtener las categorías.",
     });
   }
 };
@@ -50,7 +50,7 @@ export const createCategory = async (req: Request, res: Response) => {
 
     if (categoryDB)
       return res.status(400).json({
-        msg: `La categoría ${categoryDB.name} ya existe.`,
+        error: `La categoría ${categoryDB.name} ya existe.`,
       });
 
     const result = await prisma.expenseCategory.create({
@@ -62,7 +62,7 @@ export const createCategory = async (req: Request, res: Response) => {
     res.json(result);
   } catch (e) {
     res.status(400).json({
-      msg: "No se ha podido agregar la categoría.",
+      error: "No se ha podido agregar la categoría.",
     });
   }
 };
@@ -71,7 +71,7 @@ export const createCategory = async (req: Request, res: Response) => {
 export const updateCateogry = async (req: Request, res: Response) => {
   const { id } = req.params;
   const category: ExpenseCategory = req.body;
-  if (!id) return res.status(400).json({msg: 'Ingresar un ID es obligatorio'});
+  if (!id) return res.status(400).json({error: 'Ingresar un ID es obligatorio'});
   try {
     const result = await prisma.expenseCategory.update({
       where: {
@@ -85,7 +85,7 @@ export const updateCateogry = async (req: Request, res: Response) => {
     res.json(result);
   } catch (e) {
     res.status(400).json({
-      msg: "No se ha podido actualizar la categoría. Es posible que el ID proporcionado sea incorrecto.",
+      error: "No se ha podido actualizar la categoría. Es posible que el ID proporcionado sea incorrecto.",
     });
   }
 };
@@ -93,7 +93,7 @@ export const updateCateogry = async (req: Request, res: Response) => {
 //Delete
 export const deleteCategory = async (req: Request, res: Response) => {
   const { id } = req.params;
-  if (!id) return res.status(400).json({msg: 'Ingresar un ID es obligatorio'});
+  if (!id) return res.status(400).json({error: 'Ingresar un ID es obligatorio'});
   try {
     const result = await prisma.expenseCategory.update({
       where: {
@@ -104,12 +104,12 @@ export const deleteCategory = async (req: Request, res: Response) => {
       },
     });
     res.json({
-      msg: "Categoría eliminada.",
+      error: "Categoría eliminada.",
       result,
     });
   } catch (e) {
     res.status(400).json({
-      msg: "No existe ninguna categoría con ese id.",
+      error: "No existe ninguna categoría con ese id.",
     });
   }
 };

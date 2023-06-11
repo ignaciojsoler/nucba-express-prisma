@@ -1,8 +1,10 @@
 import { Router } from "express";
 import {
   createUser,
+  deleteUser,
   getUserById,
   getUsers,
+  updateUser,
 } from "../controllers/usersControllers";
 import { check } from "express-validator";
 import { validateFields } from "../middlewares/validateFields";
@@ -29,3 +31,13 @@ usersRouter.post(
   ],
   createUser
 );
+
+usersRouter.put("/:id", [
+  check("id", "El id ingresado no es válido").isUUID(),
+  validateFields
+], updateUser);
+
+usersRouter.delete("/:id",[
+  check("id", "El id ingresado no es válido").isUUID(),
+  validateFields
+], deleteUser);
