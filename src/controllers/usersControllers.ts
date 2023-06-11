@@ -4,6 +4,37 @@ import { v4 } from "uuid";
 
 const prisma = new PrismaClient();
 
+//Get all users
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const result = await prisma.user.findMany({
+      where: {
+        deleted: false,
+      },
+    });
+    res.json(result);
+  } catch (e) {
+    res
+      .status(500)
+      .json({ msg: "No se ha podido agregar el usuario correctamente" });
+  }
+};
+
+//Get user by id
+export const getUserById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const result = await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    res.json(result);
+  } catch (e) {
+    res.json(e);
+  }
+};
+
 //Create
 export const createUser = async (req: Request, res: Response) => {
   const uuid = v4();
@@ -16,11 +47,9 @@ export const createUser = async (req: Request, res: Response) => {
     });
 
     if (userExists)
-      return res
-        .status(400)
-        .json({
-          msg: `El correo ${newUser.email} ya se encuentra registrado.`,
-        });
+      return res.status(400).json({
+        msg: `El correo ${newUser.email} ya se encuentra registrado.`,
+      });
 
     const result = await prisma.user.create({
       data: {
@@ -32,6 +61,8 @@ export const createUser = async (req: Request, res: Response) => {
     });
     res.json(result);
   } catch (e) {
-    res.status(500).json({msg: "No se ha podido agregar el usuario correctamente"});
+    res
+      .status(500)
+      .json({ msg: "No se ha podido agregar el usuario correctamente" });
   }
 };
