@@ -23,6 +23,6 @@ export const createExpense = async (req: Request, res: Response) => {
         })
     }
     catch(e) {
-        res.status(400).json({error: 'Error al crear el gasto.'})
+        res.status(500).json({ error: "No se pudo crear el gasto correctamente." });
     }
 }
