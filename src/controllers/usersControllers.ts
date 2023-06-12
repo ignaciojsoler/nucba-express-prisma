@@ -14,7 +14,7 @@ export const getUsers = async (req: Request, res: Response) => {
     });
     res.json(result);
   } catch (e) {
-    res.status(400).json({ error: "No se han podido obtener los usuarios" });
+    res.status(500).json({ error: "No se pudo obtener la lista de usuarios." });
   }
 };
 
@@ -29,7 +29,11 @@ export const getUserById = async (req: Request, res: Response) => {
     });
     res.json(result);
   } catch (e) {
-    res.status(400).json({ error: "No existe ningún usuario con ese id" });
+    res
+      .status(404)
+      .json({
+        error: "No se encontró ningún usuario con el ID proporcionado.",
+      });
   }
 };
 
@@ -60,8 +64,8 @@ export const createUser = async (req: Request, res: Response) => {
     res.json(result);
   } catch (e) {
     res
-      .status(400)
-      .json({ error: "No se ha podido agregar el usuario correctamente" });
+      .status(500)
+      .json({ error: "No se pudo crear el usuario correctamente." });
   }
 };
 
@@ -78,7 +82,11 @@ export const updateUser = async (req: Request, res: Response) => {
     });
     res.json({ msg: "Usuario actualizado", result });
   } catch (e) {
-    res.status(400).json({ error: "No existe ningún usuario con ese id" });
+    res
+      .status(404)
+      .json({
+        error: "No se encontró ningún usuario con el ID proporcionado.",
+      });
   }
 };
 
@@ -95,6 +103,10 @@ export const deleteUser = async (req: Request, res: Response) => {
     });
     res.json({ msg: "Usuario eliminado", result });
   } catch (error) {
-    res.status(400).json({ error: "No existe ningún usuario con ese id" });
+    res
+      .status(404)
+      .json({
+        error: "No se encontró ningún usuario con el ID proporcionado.",
+      });
   }
 };

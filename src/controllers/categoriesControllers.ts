@@ -3,7 +3,6 @@ import { PrismaClient, ExpenseCategory } from "@prisma/client";
 import { v4 } from "uuid";
 
 const prisma = new PrismaClient();
-const uuid = v4();
 
 //Get all
 export const getCategories = async (req: Request, res: Response) => {
@@ -15,9 +14,9 @@ export const getCategories = async (req: Request, res: Response) => {
     });
     res.json(result);
   } catch (e) {
-    res.status(400).json({
-      error: "No se han podido obtener las categorías.",
-    });
+    res
+      .status(500)
+      .json({ error: "No se pudo obtener la lista de categorías." });
   }
 };
 
@@ -30,17 +29,20 @@ export const getCategoryByName = async (req: Request, res: Response) => {
         name: name.toLocaleUpperCase(),
       },
     });
-    res.json(result ?? "No existe ninguna categoría con ese nombre.");
+    res.json(result ?? { msg: "No existe ninguna categoría con ese nombre." });
   } catch (e) {
-    res.status(400).json({
-      error: "No se han podido obtener las categorías.",
-    });
+    res
+      .status(404)
+      .json({
+        error: "No se encontró ninguna categoría con el nombre proporcionado.",
+      });
   }
 };
 
 //Create
 export const createCategory = async (req: Request, res: Response) => {
   const newCategory: ExpenseCategory = req.body;
+  const uuid = v4();
   try {
     const categoryDB = await prisma.expenseCategory.findUnique({
       where: {
@@ -49,9 +51,9 @@ export const createCategory = async (req: Request, res: Response) => {
     });
 
     if (categoryDB)
-      return res.status(400).json({
-        error: `La categoría ${categoryDB.name} ya existe.`,
-      });
+      return res
+        .status(400)
+        .json({ error: `La categoría ${categoryDB.name} ya existe.` });
 
     const result = await prisma.expenseCategory.create({
       data: {
@@ -61,9 +63,9 @@ export const createCategory = async (req: Request, res: Response) => {
     });
     res.json(result);
   } catch (e) {
-    res.status(400).json({
-      error: "No se ha podido agregar la categoría.",
-    });
+    res
+      .status(500)
+      .json({ error: "No se pudo crear la categoría correctamente." });
   }
 };
 
@@ -85,10 +87,9 @@ export const updateCateogry = async (req: Request, res: Response) => {
     });
     res.json({ msg: "Categoría actualizada", result });
   } catch (e) {
-    res.status(400).json({
-      error:
-        "No se ha podido actualizar la categoría. Es posible que el ID proporcionado sea incorrecto.",
-    });
+    res
+      .status(500)
+      .json({ error: "No se pudo actualizar la categoría correctamente." });
   }
 };
 
@@ -111,8 +112,10 @@ export const deleteCategory = async (req: Request, res: Response) => {
       result,
     });
   } catch (e) {
-    res.status(400).json({
-      error: "No existe ninguna categoría con ese id.",
-    });
+    res
+      .status(404)
+      .json({
+        error: "No se encontró ninguna categoría con el ID proporcionado.",
+      });
   }
 };
