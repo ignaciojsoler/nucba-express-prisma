@@ -27,13 +27,17 @@ export const getUserById = async (req: Request, res: Response) => {
         id: id,
       },
     });
+    if (!result)
+      return res
+        .status(404)
+        .json({
+          error: "No se encontró ningún usuario con el ID proporcionado.",
+        });
     res.json(result);
   } catch (e) {
-    res
-      .status(404)
-      .json({
-        error: "No se encontró ningún usuario con el ID proporcionado.",
-      });
+    res.status(500).json({
+      error: "No se pudo obtener el usuario.",
+    });
   }
 };
 
@@ -82,11 +86,9 @@ export const updateUser = async (req: Request, res: Response) => {
     });
     res.json({ msg: "Usuario actualizado", result });
   } catch (e) {
-    res
-      .status(404)
-      .json({
-        error: "No se encontró ningún usuario con el ID proporcionado.",
-      });
+    res.status(404).json({
+      error: "No se encontró ningún usuario con el ID proporcionado.",
+    });
   }
 };
 
@@ -103,10 +105,8 @@ export const deleteUser = async (req: Request, res: Response) => {
     });
     res.json({ msg: "Usuario eliminado", result });
   } catch (error) {
-    res
-      .status(404)
-      .json({
-        error: "No se encontró ningún usuario con el ID proporcionado.",
-      });
+    res.status(404).json({
+      error: "No se encontró ningún usuario con el ID proporcionado.",
+    });
   }
 };

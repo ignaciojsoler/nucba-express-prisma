@@ -29,12 +29,18 @@ export const getCategoryByName = async (req: Request, res: Response) => {
         name: name.toLocaleUpperCase(),
       },
     });
-    res.json(result ?? { msg: "No existe ninguna categoría con ese nombre." });
+    if (!result)
+      return res
+        .status(404)
+        .json({
+          error: "No se encontró ninguna categoría con el nombre proporcionado.",
+        });
+    res.json(result);
   } catch (e) {
     res
-      .status(404)
+      .status(500)
       .json({
-        error: "No se encontró ninguna categoría con el nombre proporcionado.",
+        error: "No se ha podido obtener la categoría.",
       });
   }
 };
