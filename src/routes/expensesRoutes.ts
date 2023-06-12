@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createExpense,
+  deleteExpense,
   getExpenseById,
   getExpenses,
   updateExpense,
@@ -52,3 +53,8 @@ expensesRouter.post(
   ],
   createExpense
 );
+
+expensesRouter.delete("/:id",[
+    check("id", "El id ingresado no es válido").isUUID(),
+    validateFields
+  ], deleteExpense);

@@ -82,3 +82,21 @@ export const updateExpense = async (req: Request, res: Response) => {
 };
 
 //Delete
+export const deleteExpense = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const result = await prisma.expense.update({
+        where: {
+          id: id,
+        },
+        data: {
+          deleted: true,
+        },
+      });
+      res.json({ msg: "Gasto eliminado", result });
+    } catch (error) {
+      res.status(404).json({
+        error: "No se encontró ningún gasto con el ID proporcionado.",
+      });
+    }
+  };
