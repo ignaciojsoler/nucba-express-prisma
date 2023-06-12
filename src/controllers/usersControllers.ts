@@ -14,9 +14,7 @@ export const getUsers = async (req: Request, res: Response) => {
     });
     res.json(result);
   } catch (e) {
-    res
-      .status(400)
-      .json({ error: "No se han podido obtener los usuarios" });
+    res.status(400).json({ error: "No se han podido obtener los usuarios" });
   }
 };
 
@@ -31,7 +29,7 @@ export const getUserById = async (req: Request, res: Response) => {
     });
     res.json(result);
   } catch (e) {
-    res.status(400).json({error: "No existe ningún usuario con ese id"});
+    res.status(400).json({ error: "No existe ningún usuario con ese id" });
   }
 };
 
@@ -78,7 +76,7 @@ export const updateUser = async (req: Request, res: Response) => {
       },
       data: userData,
     });
-    res.json(result);
+    res.json({ msg: "Usuario actualizado", result });
   } catch (e) {
     res.status(400).json({ error: "No existe ningún usuario con ese id" });
   }
@@ -86,17 +84,17 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const result = await prisma.user.update({
-      where:{
-        id: id
+      where: {
+        id: id,
       },
       data: {
-        deleted: true
-      }
+        deleted: true,
+      },
     });
-    res.json(result)
+    res.json({ msg: "Usuario eliminado", result });
   } catch (error) {
-    res.status(400).json({error: "No existe ningún usuario con ese id"});
+    res.status(400).json({ error: "No existe ningún usuario con ese id" });
   }
-}
+};

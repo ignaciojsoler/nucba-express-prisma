@@ -71,7 +71,8 @@ export const createCategory = async (req: Request, res: Response) => {
 export const updateCateogry = async (req: Request, res: Response) => {
   const { id } = req.params;
   const category: ExpenseCategory = req.body;
-  if (!id) return res.status(400).json({error: 'Ingresar un ID es obligatorio'});
+  if (!id)
+    return res.status(400).json({ error: "Ingresar un ID es obligatorio" });
   try {
     const result = await prisma.expenseCategory.update({
       where: {
@@ -79,13 +80,14 @@ export const updateCateogry = async (req: Request, res: Response) => {
       },
       data: {
         name: category.name.toLocaleUpperCase(),
-        deleted: category.deleted
+        deleted: category.deleted,
       },
     });
-    res.json(result);
+    res.json({ msg: "Categoría actualizada", result });
   } catch (e) {
     res.status(400).json({
-      error: "No se ha podido actualizar la categoría. Es posible que el ID proporcionado sea incorrecto.",
+      error:
+        "No se ha podido actualizar la categoría. Es posible que el ID proporcionado sea incorrecto.",
     });
   }
 };
@@ -93,7 +95,8 @@ export const updateCateogry = async (req: Request, res: Response) => {
 //Delete
 export const deleteCategory = async (req: Request, res: Response) => {
   const { id } = req.params;
-  if (!id) return res.status(400).json({error: 'Ingresar un ID es obligatorio'});
+  if (!id)
+    return res.status(400).json({ error: "Ingresar un ID es obligatorio" });
   try {
     const result = await prisma.expenseCategory.update({
       where: {
@@ -104,7 +107,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
       },
     });
     res.json({
-      error: "Categoría eliminada.",
+      msg: "Categoría eliminada.",
       result,
     });
   } catch (e) {
