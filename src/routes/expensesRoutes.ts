@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { createExpense, getExpenseById, getExpenses } from "../controllers/expensesControllers";
+import {
+  createExpense,
+  getExpenseById,
+  getExpenses,
+  updateExpense,
+} from "../controllers/expensesControllers";
 import { check } from "express-validator";
 import { validateFields } from "../middlewares/validateFields";
 import { categoryExists, userExists } from "../helpers/dbValidators";
@@ -8,10 +13,24 @@ export const expensesRouter = Router();
 
 expensesRouter.get("/", getExpenses);
 
-expensesRouter.get("/:id", [
+expensesRouter.get(
+  "/:id",
+  [check("id", "El ID proporcionado no es válido").isUUID(), validateFields],
+  getExpenseById
+);
+
+expensesRouter.put(
+  "/:id",
+  [
     check("id", "El ID proporcionado no es válido").isUUID(),
-    validateFields
-], getExpenseById);
+    check("categoryId", "La categoría ingresada no existe").custom(
+      categoryExists
+    ),
+    check("userId", "El usuario ingresado no existe").custom(userExists),
+    validateFields,
+  ],
+  updateExpense
+);
 
 expensesRouter.post(
   "/",

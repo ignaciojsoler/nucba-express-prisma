@@ -4,6 +4,7 @@ import { v4 } from "uuid";
 
 const prisma = new PrismaClient();
 
+//Get all
 export const getExpenses = async (req: Request, res: Response) => {
   try {
     const result = await prisma.expense.findMany();
@@ -13,6 +14,7 @@ export const getExpenses = async (req: Request, res: Response) => {
   }
 };
 
+//Get by id
 export const getExpenseById = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
@@ -31,6 +33,7 @@ export const getExpenseById = async (req: Request, res: Response) => {
   }
 };
 
+//Create
 export const createExpense = async (req: Request, res: Response) => {
   const { amount, description, categoryId, userId }: Expense = req.body;
   const uuid = v4();
@@ -52,3 +55,30 @@ export const createExpense = async (req: Request, res: Response) => {
     res.status(500).json({ error: "No se pudo crear el gasto correctamente." });
   }
 };
+
+//Update
+export const updateExpense = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { amount, description, categoryId, userId }: Expense = req.body;
+  try {
+    const result = await prisma.expense.update({
+      where: {
+        id: id,
+      },
+      data: {
+        amount,
+        description,
+        categoryId,
+        userId,
+        updatedAt: new Date(),
+      },
+    });
+    res.json({ msg: "Gasto actualizado", result });
+  } catch (e) {
+    res.status(404).json({
+        error: "No se encontró ningún gasto con el ID proporcionado.",
+      });
+  }
+};
+
+//Delete
