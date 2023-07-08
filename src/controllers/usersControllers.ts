@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient, User } from "@prisma/client";
 import { v4 } from "uuid";
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -44,7 +45,12 @@ export const getUserById = async (req: Request, res: Response) => {
 //Create
 export const createUser = async (req: Request, res: Response) => {
   const uuid = v4();
+
   const newUser: User = req.body;
+
+  const salt = bcrypt.genSaltSync(10);
+  const hashPassword = bcrypt.hashSync(newUser.password, salt);
+
   try {
     const userExists = await prisma.user.findUnique({
       where: {
@@ -62,7 +68,7 @@ export const createUser = async (req: Request, res: Response) => {
         id: uuid,
         name: newUser.name,
         email: newUser.email,
-        password: newUser.password,
+        password: hashPassword,
       },
     });
     res.json(result);
