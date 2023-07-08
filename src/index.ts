@@ -1,7 +1,10 @@
 import express from 'express';
+import dotenv from 'dotenv';
 import { expensesRouter } from './routes/expensesRoutes';
 import { usersRouter } from './routes/usersRoutes';
 import { categoriesRouter } from './routes/categoriesRoutes';
+
+dotenv.config();
 
 const PORT = process.env.PORT || 8080
 const app = express();
