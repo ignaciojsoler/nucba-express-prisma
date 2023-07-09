@@ -9,6 +9,7 @@ import {
 import { check } from "express-validator";
 import { validateFields } from "../middlewares/validateFields";
 import { categoryExists, userExists } from "../helpers/dbValidators";
+import { validateToken } from "../middlewares/validateToken";
 
 export const expensesRouter = Router();
 
@@ -20,22 +21,10 @@ expensesRouter.get(
   getExpenseById
 );
 
-expensesRouter.put(
-  "/:id",
-  [
-    check("id", "El ID proporcionado no es válido").isUUID(),
-    check("categoryId", "La categoría ingresada no existe").custom(
-      categoryExists
-    ),
-    check("userId", "El usuario ingresado no existe").custom(userExists),
-    validateFields,
-  ],
-  updateExpense
-);
-
 expensesRouter.post(
   "/",
   [
+    validateToken,
     check("amount", "Es necesario ingresar un importe numérico")
       .isNumeric()
       .notEmpty(),
@@ -54,7 +43,21 @@ expensesRouter.post(
   createExpense
 );
 
-expensesRouter.delete("/:id",[
-    check("id", "El id ingresado no es válido").isUUID(),
-    validateFields
-  ], deleteExpense);
+expensesRouter.put(
+  "/:id",
+  [
+    check("id", "El ID proporcionado no es válido").isUUID(),
+    check("categoryId", "La categoría ingresada no existe").custom(
+      categoryExists
+    ),
+    check("userId", "El usuario ingresado no existe").custom(userExists),
+    validateFields,
+  ],
+  updateExpense
+);
+
+expensesRouter.delete(
+  "/:id",
+  [check("id", "El id ingresado no es válido").isUUID(), validateFields],
+  deleteExpense
+);
