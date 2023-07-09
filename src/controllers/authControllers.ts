@@ -2,14 +2,13 @@ import { Request, Response } from "express";
 import { User } from "../models/types";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
 export const login = async (req: Request, res: Response) => {
   try {
     const user: User = req.body;
-
-    if (!user) return res.json("Ingresar correo y contraseña.");
 
     const userExists = await prisma.user.findUnique({
       where: {
@@ -18,9 +17,7 @@ export const login = async (req: Request, res: Response) => {
     });
 
     if (!userExists)
-      return res
-        .status(400)
-        .json({ msg: `No se ha encontrado ningún usuario con ese correo` });
+      return res.status(400).json({ msg: `Correo electrónico inválido.` });
 
     const validPassword = await bcrypt.compare(
       user.password,
@@ -32,7 +29,11 @@ export const login = async (req: Request, res: Response) => {
         msg: "La contraseña es incorrecta",
       });
 
-    res.json(userExists);
+    const token = jwt.sign(user, process.env.SECRET_KEY || "", {
+      expiresIn: "72h",
+    });
+
+    res.json({user: userExists.email, 'token': token});
   } catch (err) {
     return res.status(500).json({ msg: "Algo ha salido mal" });
   }
