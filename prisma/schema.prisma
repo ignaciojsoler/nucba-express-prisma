@@ -36,7 +36,7 @@ model Expense {
 
 model ExpenseCategory {
   id       String    @id
-  name     String    @unique
+  name     String    
   expenses Expense[]
   deleted  Boolean   @default(false)
   userId   String

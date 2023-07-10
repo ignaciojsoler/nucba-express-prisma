@@ -14,7 +14,7 @@ export const categoriesRouter = Router();
 
 categoriesRouter.get("/", validateToken, getCategories);
 
-categoriesRouter.get("/:id", getCategoryById);
+categoriesRouter.get("/:id", validateToken, getCategoryById);
 
 categoriesRouter.post(
   "/",

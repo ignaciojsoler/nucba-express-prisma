@@ -26,16 +26,23 @@ export const getCategories = async (req: Request, res: Response) => {
 //Get by id
 export const getCategoryById = async (req: Request, res: Response) => {
   const { id } = req.params;
+  const user: User = res.locals.authenticatedUser;
   try {
     const result = await prisma.expenseCategory.findUnique({
       where: {
         id: id,
       },
     });
+
     if (!result)
       return res.status(404).json({
         error: "No se encontró ninguna categoría con el id proporcionado.",
       });
+
+    if (result.userId !== user.id && user.role !== "ADMIN") {
+      return res.status(403).json({ error: "Acceso no autorizado" });
+    }
+
     res.json(result);
   } catch (e) {
     res.status(500).json({
@@ -51,16 +58,23 @@ export const createCategory = async (req: Request, res: Response) => {
   const { id }: User = res.locals.authenticatedUser;
 
   try {
-    const categoryDB = await prisma.expenseCategory.findUnique({
-      where: {
-        name: newCategory.name.toLocaleUpperCase(),
-      },
-    });
 
-    if (categoryDB)
+    const userCategories = await prisma.expenseCategory.findMany({
+      where: {
+        userId: id
+      }
+    })
+
+    const categoryExists = userCategories.find(c => {
+      return c.name === newCategory.name.toLocaleUpperCase();
+    });
+    console.log(categoryExists, !categoryExists?.deleted)
+    console.log(categoryExists?.deleted )
+
+    if (categoryExists && !categoryExists.deleted)
       return res
         .status(400)
-        .json({ error: `La categoría ${categoryDB.name} ya existe.` });
+        .json({ error: `La categoría ${categoryExists.name} ya existe.` });
 
     const result = await prisma.expenseCategory.create({
       data: {
@@ -69,6 +83,7 @@ export const createCategory = async (req: Request, res: Response) => {
         userId: id,
       },
     });
+    
     res.json(result);
   } catch (e) {
     res
@@ -86,11 +101,12 @@ export const updateCateogry = async (req: Request, res: Response) => {
   if (!id)
     return res.status(400).json({ error: "Ingresar un ID es obligatorio" });
   try {
-    const categoryExists: Category | null = await prisma.expenseCategory.findUnique({
-      where: {
-        id: id,
-      },
-    });
+    const categoryExists: Category | null =
+      await prisma.expenseCategory.findUnique({
+        where: {
+          id: id,
+        },
+      });
 
     if (!categoryExists)
       return res
@@ -125,11 +141,12 @@ export const deleteCategory = async (req: Request, res: Response) => {
   if (!id)
     return res.status(400).json({ error: "Ingresar un ID es obligatorio" });
   try {
-    const categoryExists: Category | null = await prisma.expenseCategory.findUnique({
-      where: {
-        id: id,
-      },
-    });
+    const categoryExists: Category | null =
+      await prisma.expenseCategory.findUnique({
+        where: {
+          id: id,
+        },
+      });
 
     if (!categoryExists)
       return res
