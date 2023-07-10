@@ -29,11 +29,11 @@ export const login = async (req: Request, res: Response) => {
         msg: "La contraseña es incorrecta",
       });
 
-    const token = jwt.sign(user, process.env.SECRET_KEY || "", {
+    const token = jwt.sign(userExists, process.env.SECRET_KEY || "", {
       expiresIn: "72h",
     });
 
-    res.json({user: userExists.email, 'token': token});
+    res.json({userExists, 'token': token});
   } catch (err) {
     return res.status(500).json({ msg: "Algo ha salido mal" });
   }

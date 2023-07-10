@@ -13,7 +13,7 @@ import { validateToken } from "../middlewares/validateToken";
 
 export const expensesRouter = Router();
 
-expensesRouter.get("/", getExpenses);
+expensesRouter.get("/", validateToken, getExpenses);
 
 expensesRouter.get(
   "/:id",
@@ -36,8 +36,6 @@ expensesRouter.post(
     check("categoryId", "La categoría ingresada no existe").custom(
       categoryExists
     ),
-    check("userId", "Es necesario ingresar un usuario").notEmpty(),
-    check("userId", "El usuario ingresado no existe").custom(userExists),
     validateFields,
   ],
   createExpense
