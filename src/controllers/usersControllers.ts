@@ -135,6 +135,17 @@ export const deleteUser = async (req: Request, res: Response) => {
 
   try {
     const { id } = req.params;
+
+    const userExists = await prisma.user.findUnique({
+      where: {
+        id: id
+      },
+    });
+
+    if (userExists?.id !== user.id && user.role !== "ADMIN") {
+      return res.status(403).json({ error: "Acceso no autorizado" });
+    }
+
     const result = await prisma.user.update({
       where: {
         id: id,
@@ -143,6 +154,7 @@ export const deleteUser = async (req: Request, res: Response) => {
         deleted: true,
       },
     });
+    
     res.json({ msg: "Usuario eliminado", result });
   } catch (error) {
     res.status(404).json({

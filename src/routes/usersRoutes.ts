@@ -40,6 +40,7 @@ usersRouter.put("/:id", [
 ], updateUser);
 
 usersRouter.delete("/:id",[
+  validateToken,
   check("id", "El id ingresado no es válido").isUUID(),
   validateFields
 ], deleteUser);
