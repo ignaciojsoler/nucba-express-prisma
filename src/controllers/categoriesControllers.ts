@@ -65,16 +65,16 @@ export const createCategory = async (req: Request, res: Response) => {
       }
     })
 
-    const categoryExists = userCategories.find(c => {
-      return c.name === newCategory.name.toLocaleUpperCase();
+    const categoryExists = userCategories.filter(c => {
+      return c.name === newCategory.name.toLocaleUpperCase() && !c.deleted;
     });
-    console.log(categoryExists, !categoryExists?.deleted)
-    console.log(categoryExists?.deleted )
 
-    if (categoryExists && !categoryExists.deleted)
+    console.log(categoryExists)
+
+    if (categoryExists.length)
       return res
         .status(400)
-        .json({ error: `La categoría ${categoryExists.name} ya existe.` });
+        .json({ error: `La categoría ${newCategory.name} ya existe.` });
 
     const result = await prisma.expenseCategory.create({
       data: {
