@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 //Get all
 export const getExpenses = async (req: Request, res: Response) => {
   const user: User = res.locals.authenticatedUser;
-  
+
   try {
     const result = await prisma.expense.findMany({
       where: {
@@ -78,7 +78,22 @@ export const createExpense = async (req: Request, res: Response) => {
 export const updateExpense = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { amount, description, categoryId, userId }: Expense = req.body;
+  const user: User = res.locals.authenticatedUser;
   try {
+    const expenseExists = await prisma.expense.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!expenseExists)
+      return res
+        .status(400)
+        .json({ msg: `No existe ningún gasto con el id ${id}.` });
+
+    if (expenseExists.userId !== user.id && user.role !== "ADMIN")
+      return res.json({ msg: "Acceso no autorizado" });
+
     const result = await prisma.expense.update({
       where: {
         id: id,

@@ -48,11 +48,8 @@ expensesRouter.post(
 expensesRouter.put(
   "/:id",
   [
+    validateToken,
     check("id", "El ID proporcionado no es válido").isUUID(),
-    check("categoryId", "La categoría ingresada no existe").custom(
-      categoryExists
-    ),
-    check("userId", "El usuario ingresado no existe").custom(userExists),
     validateFields,
   ],
   updateExpense
