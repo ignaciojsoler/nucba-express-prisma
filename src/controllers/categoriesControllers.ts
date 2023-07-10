@@ -81,9 +81,26 @@ export const createCategory = async (req: Request, res: Response) => {
 export const updateCateogry = async (req: Request, res: Response) => {
   const { id } = req.params;
   const category: ExpenseCategory = req.body;
+  const user: User = res.locals.authenticatedUser;
+
   if (!id)
     return res.status(400).json({ error: "Ingresar un ID es obligatorio" });
   try {
+    const categoryExists: Category | null = await prisma.expenseCategory.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!categoryExists)
+      return res
+        .status(404)
+        .json({ msg: "No existe ninguna categoría con el id proporcionado." });
+
+    if (categoryExists.userId !== user.id && user.role !== "ADMIN") {
+      return res.status(403).json({ error: "Acceso no autorizado" });
+    }
+
     const result = await prisma.expenseCategory.update({
       where: {
         id: id,
@@ -108,18 +125,18 @@ export const deleteCategory = async (req: Request, res: Response) => {
   if (!id)
     return res.status(400).json({ error: "Ingresar un ID es obligatorio" });
   try {
-    const category: Category | null = await prisma.expenseCategory.findUnique({
+    const categoryExists: Category | null = await prisma.expenseCategory.findUnique({
       where: {
         id: id,
       },
     });
 
-    if (!category)
+    if (!categoryExists)
       return res
         .status(404)
         .json({ msg: "No existe ninguna categoría con el id proporcionado." });
 
-    if (category.userId !== user.id && user.role !== "ADMIN") {
+    if (categoryExists.userId !== user.id && user.role !== "ADMIN") {
       return res.status(403).json({ error: "Acceso no autorizado" });
     }
 
