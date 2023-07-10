@@ -17,7 +17,11 @@ expensesRouter.get("/", validateToken, getExpenses);
 
 expensesRouter.get(
   "/:id",
-  [check("id", "El ID proporcionado no es válido").isUUID(), validateFields],
+  [
+    validateToken,
+    check("id", "El ID proporcionado no es válido").isUUID(), 
+    validateFields
+  ],
   getExpenseById
 );
 

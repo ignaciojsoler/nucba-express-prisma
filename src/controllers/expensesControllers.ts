@@ -7,9 +7,9 @@ const prisma = new PrismaClient();
 
 //Get all
 export const getExpenses = async (req: Request, res: Response) => {
+  const user: User = res.locals.authenticatedUser;
+  
   try {
-    const user: User = res.locals.authenticatedUser;
-
     const result = await prisma.expense.findMany({
       where: {
         userId: user.id,
@@ -24,16 +24,23 @@ export const getExpenses = async (req: Request, res: Response) => {
 //Get by id
 export const getExpenseById = async (req: Request, res: Response) => {
   const { id } = req.params;
+  const user: User = res.locals.authenticatedUser;
+
   try {
     const result = await prisma.expense.findUnique({
       where: {
         id: id,
       },
     });
+
     if (!result)
       return res.status(404).json({
         error: "No se encontró ningún gasto con el ID proporcionado.",
       });
+
+    if (result.userId !== user.id && user.role !== "ADMIN")
+      return res.status(403).json({ msg: "Acceso no autorizado" });
+
     res.json(result);
   } catch (e) {
     res.status(500).json({ error: "No se ha podido obtener el gasto" });
