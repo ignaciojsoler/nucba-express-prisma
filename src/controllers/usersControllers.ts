@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { PrismaClient, User } from "@prisma/client";
 import { v4 } from "uuid";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
+import sgMail from "@sendgrid/mail";
 
 const prisma = new PrismaClient();
 
@@ -29,11 +30,9 @@ export const getUserById = async (req: Request, res: Response) => {
       },
     });
     if (!result)
-      return res
-        .status(404)
-        .json({
-          error: "No se encontró ningún usuario con el ID proporcionado.",
-        });
+      return res.status(404).json({
+        error: "No se encontró ningún usuario con el ID proporcionado.",
+      });
     res.json(result);
   } catch (e) {
     res.status(500).json({
@@ -50,6 +49,8 @@ export const createUser = async (req: Request, res: Response) => {
 
   const salt = bcrypt.genSaltSync(10);
   const hashPassword = bcrypt.hashSync(newUser.password, salt);
+
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 
   try {
     const userExists = await prisma.user.findUnique({
@@ -69,9 +70,23 @@ export const createUser = async (req: Request, res: Response) => {
         name: newUser.name,
         email: newUser.email,
         password: hashPassword,
-        role: "CLIENT"
+        role: "CLIENT",
       },
     });
+
+    const msg = {
+      to: newUser.email,
+      from: "ignaciojsoler@gmail.com",
+      subject: `Bienvenido ${newUser.name}`,
+      text: "Te registraste correctamente en la aplicación de gastos.",
+    };
+
+    sgMail.send(msg)
+      .then(() => {
+        console.log('Email enviado correctamente');
+      })
+      .catch(err => console.log(err));
+
     res.json(result);
   } catch (e) {
     res
