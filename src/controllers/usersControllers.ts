@@ -97,15 +97,24 @@ export const createUser = async (req: Request, res: Response) => {
 
 //Update user
 export const updateUser = async (req: Request, res: Response) => {
+
+  const user: User = res.locals.authenticatedUser;
+
   try {
     const { id } = req.params;
     const userData: User = req.body;
+
     const result = await prisma.user.update({
       where: {
         id: id,
       },
       data: userData,
     });
+
+    if (result.id !== user.id && user.role !== "ADMIN") {
+      return res.status(403).json({ error: "Acceso no autorizado" });
+    }
+
     res.json({ msg: "Usuario actualizado", result });
   } catch (e) {
     res.status(404).json({

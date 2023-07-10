@@ -69,8 +69,6 @@ export const createCategory = async (req: Request, res: Response) => {
       return c.name === newCategory.name.toLocaleUpperCase() && !c.deleted;
     });
 
-    console.log(categoryExists)
-
     if (categoryExists.length)
       return res
         .status(400)

@@ -8,6 +8,7 @@ import {
 } from "../controllers/usersControllers";
 import { check } from "express-validator";
 import { validateFields } from "../middlewares/validateFields";
+import { validateToken } from "../middlewares/validateToken";
 
 export const usersRouter = Router();
 
@@ -34,6 +35,7 @@ usersRouter.post(
 
 usersRouter.put("/:id", [
   check("id", "El id ingresado no es válido").isUUID(),
+  validateToken,
   validateFields
 ], updateUser);
 
