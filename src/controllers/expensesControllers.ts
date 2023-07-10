@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 export const getExpenses = async (req: Request, res: Response) => {
   try {
     const user: User = res.locals.authenticatedUser;
-    console.log(user);
+
     const result = await prisma.expense.findMany({
       where: {
         userId: user.id,

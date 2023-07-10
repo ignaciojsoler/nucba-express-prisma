@@ -8,16 +8,18 @@ import {
 } from "../controllers/categoriesControllers";
 import { check } from "express-validator";
 import { validateFields } from "../middlewares/validateFields";
+import { validateToken } from "../middlewares/validateToken";
 
 export const categoriesRouter = Router();
 
-categoriesRouter.get("/", getCategories);
+categoriesRouter.get("/", validateToken, getCategories);
 
 categoriesRouter.get("/:id", getCategoryById);
 
 categoriesRouter.post(
   "/",
   [
+    validateToken,
     check("name", "El nombre de la categoría es obligatorio")
       .isString()
       .notEmpty(),

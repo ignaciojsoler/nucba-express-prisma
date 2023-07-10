@@ -2,7 +2,8 @@ export type User = {
   id: string,
   name: string,
   email: string,
-  password: string
+  password: string;
+  role: string;
 }
 
 export type Expense = {
@@ -14,5 +15,6 @@ export type Expense = {
 };
 
 export type Category = {
-  name: string
+  name: string;
+  userId: string;
 }

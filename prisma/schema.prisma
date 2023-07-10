@@ -10,31 +10,35 @@ datasource db {
 }
 
 model User {
-  id       String      @id
-  name     String
-  email    String   @unique
-  password String
-  expenses Expense[]
-  createdAt   DateTime           @default(now())
-  deleted     Boolean         @default(false)
+  id              String            @id
+  name            String
+  email           String            @unique
+  password        String
+  role            String
+  expenses        Expense[]
+  createdAt       DateTime          @default(now())
+  deleted         Boolean           @default(false)
+  ExpenseCategory ExpenseCategory[]
 }
 
 model Expense {
-  id          String             @id
+  id          String          @id
   amount      Float
-  category    ExpenseCategory    @relation(fields: [categoryId], references: [id])
-  categoryId  String             
+  category    ExpenseCategory @relation(fields: [categoryId], references: [id])
+  categoryId  String
   description String?
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
-  deleted     Boolean            @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  deleted     Boolean         @default(false)
   userId      String
-  user        User               @relation(fields: [userId], references: [id])
+  user        User            @relation(fields: [userId], references: [id])
 }
 
 model ExpenseCategory {
-  id          String             @id
-  name        String             @unique
-  expenses    Expense[]
-  deleted     Boolean         @default(false)
+  id       String    @id
+  name     String    @unique
+  expenses Expense[]
+  deleted  Boolean   @default(false)
+  userId   String
+  user     User      @relation(fields: [userId], references: [id])
 }

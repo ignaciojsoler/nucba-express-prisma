@@ -69,6 +69,7 @@ export const createUser = async (req: Request, res: Response) => {
         name: newUser.name,
         email: newUser.email,
         password: hashPassword,
+        role: newUser.role
       },
     });
     res.json(result);

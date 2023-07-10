@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient, ExpenseCategory } from "@prisma/client";
+import { PrismaClient, ExpenseCategory, User } from "@prisma/client";
 import { v4 } from "uuid";
 
 const prisma = new PrismaClient();
@@ -43,8 +43,12 @@ export const getCategoryById = async (req: Request, res: Response) => {
 
 //Create
 export const createCategory = async (req: Request, res: Response) => {
-  const newCategory: ExpenseCategory = req.body;
+
   const uuid = v4();
+
+  const newCategory: ExpenseCategory = req.body;
+  const { id }: User = res.locals.authenticatedUser;
+
   try {
     const categoryDB = await prisma.expenseCategory.findUnique({
       where: {
@@ -61,6 +65,7 @@ export const createCategory = async (req: Request, res: Response) => {
       data: {
         id: uuid,
         name: newCategory.name.toLocaleUpperCase(),
+        userId: id
       },
     });
     res.json(result);
