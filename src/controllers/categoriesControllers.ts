@@ -6,10 +6,12 @@ const prisma = new PrismaClient();
 
 //Get all
 export const getCategories = async (req: Request, res: Response) => {
+  const {id} = res.locals.authenticatedUser;
   try {
     const result = await prisma.expenseCategory.findMany({
       where: {
-        deleted: false,
+        userId: id,
+        deleted: false
       },
     });
     res.json(result);
