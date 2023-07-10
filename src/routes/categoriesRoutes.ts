@@ -36,6 +36,10 @@ categoriesRouter.put(
 
 categoriesRouter.delete(
   "/:id",
-  [check("id", "El ID ingresado no es válido").isUUID(), validateFields],
+  [
+    validateToken,
+    check("id", "El ID ingresado no es válido").isUUID(), 
+    validateFields
+  ],
   deleteCategory
 );

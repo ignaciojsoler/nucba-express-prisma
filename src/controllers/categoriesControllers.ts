@@ -1,17 +1,18 @@
 import { Request, Response } from "express";
 import { PrismaClient, ExpenseCategory, User } from "@prisma/client";
 import { v4 } from "uuid";
+import { Category } from "../models/types";
 
 const prisma = new PrismaClient();
 
 //Get all
 export const getCategories = async (req: Request, res: Response) => {
-  const {id} = res.locals.authenticatedUser;
+  const { id } = res.locals.authenticatedUser;
   try {
     const result = await prisma.expenseCategory.findMany({
       where: {
         userId: id,
-        deleted: false
+        deleted: false,
       },
     });
     res.json(result);
@@ -45,9 +46,7 @@ export const getCategoryById = async (req: Request, res: Response) => {
 
 //Create
 export const createCategory = async (req: Request, res: Response) => {
-
   const uuid = v4();
-
   const newCategory: ExpenseCategory = req.body;
   const { id }: User = res.locals.authenticatedUser;
 
@@ -67,7 +66,7 @@ export const createCategory = async (req: Request, res: Response) => {
       data: {
         id: uuid,
         name: newCategory.name.toLocaleUpperCase(),
-        userId: id
+        userId: id,
       },
     });
     res.json(result);
@@ -105,9 +104,25 @@ export const updateCateogry = async (req: Request, res: Response) => {
 //Delete
 export const deleteCategory = async (req: Request, res: Response) => {
   const { id } = req.params;
+  const user: User = res.locals.authenticatedUser;
   if (!id)
     return res.status(400).json({ error: "Ingresar un ID es obligatorio" });
   try {
+    const category: Category | null = await prisma.expenseCategory.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!category)
+      return res
+        .status(404)
+        .json({ msg: "No existe ninguna categoría con el id proporcionado." });
+
+    if (category.userId !== user.id && user.role !== "ADMIN") {
+      return res.status(403).json({ error: "Acceso no autorizado" });
+    }
+
     const result = await prisma.expenseCategory.update({
       where: {
         id: id,
