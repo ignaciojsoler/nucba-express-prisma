@@ -3,7 +3,7 @@ import {
   createCategory,
   deleteCategory,
   getCategories,
-  getCategoryByName,
+  getCategoryById,
   updateCateogry,
 } from "../controllers/categoriesControllers";
 import { check } from "express-validator";
@@ -13,7 +13,7 @@ export const categoriesRouter = Router();
 
 categoriesRouter.get("/", getCategories);
 
-categoriesRouter.get("/:name", getCategoryByName);
+categoriesRouter.get("/:id", getCategoryById);
 
 categoriesRouter.post(
   "/",

@@ -20,28 +20,24 @@ export const getCategories = async (req: Request, res: Response) => {
   }
 };
 
-//Get by name
-export const getCategoryByName = async (req: Request, res: Response) => {
-  const { name } = req.params;
+//Get by id
+export const getCategoryById = async (req: Request, res: Response) => {
+  const { id } = req.params;
   try {
     const result = await prisma.expenseCategory.findUnique({
       where: {
-        name: name.toLocaleUpperCase(),
+        id: id,
       },
     });
     if (!result)
-      return res
-        .status(404)
-        .json({
-          error: "No se encontró ninguna categoría con el nombre proporcionado.",
-        });
+      return res.status(404).json({
+        error: "No se encontró ninguna categoría con el id proporcionado.",
+      });
     res.json(result);
   } catch (e) {
-    res
-      .status(500)
-      .json({
-        error: "No se ha podido obtener la categoría.",
-      });
+    res.status(500).json({
+      error: "No se ha podido obtener la categoría.",
+    });
   }
 };
 
@@ -118,10 +114,8 @@ export const deleteCategory = async (req: Request, res: Response) => {
       result,
     });
   } catch (e) {
-    res
-      .status(404)
-      .json({
-        error: "No se encontró ninguna categoría con el ID proporcionado.",
-      });
+    res.status(404).json({
+      error: "No se encontró ninguna categoría con el ID proporcionado.",
+    });
   }
 };
