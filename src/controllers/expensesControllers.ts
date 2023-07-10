@@ -116,8 +116,23 @@ export const updateExpense = async (req: Request, res: Response) => {
 
 //Delete
 export const deleteExpense = async (req: Request, res: Response) => {
+  const user: User = res.locals.authenticatedUser;
+
   try {
     const { id } = req.params;
+
+    const expenseExists = await prisma.expense.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!expenseExists)
+      return res.json({ msg: `No existe ningún gasto con el id ${id}` });
+
+    if (expenseExists.userId !== user.id && user.role !== "ADMIN")
+      return res.status(403).json({ msg: "Acceso no autorizado" });
+
     const result = await prisma.expense.update({
       where: {
         id: id,

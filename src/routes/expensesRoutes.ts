@@ -19,8 +19,8 @@ expensesRouter.get(
   "/:id",
   [
     validateToken,
-    check("id", "El ID proporcionado no es válido").isUUID(), 
-    validateFields
+    check("id", "El ID proporcionado no es válido").isUUID(),
+    validateFields,
   ],
   getExpenseById
 );
@@ -57,6 +57,10 @@ expensesRouter.put(
 
 expensesRouter.delete(
   "/:id",
-  [check("id", "El id ingresado no es válido").isUUID(), validateFields],
+  [
+    validateToken,
+    check("id", "El id ingresado no es válido").isUUID(),
+    validateFields,
+  ],
   deleteExpense
 );
