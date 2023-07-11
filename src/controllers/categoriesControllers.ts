@@ -14,6 +14,14 @@ export const getCategories = async (req: Request, res: Response) => {
         userId: id,
         deleted: false,
       },
+      include: {
+        expenses: true,
+        user: {
+          select: {
+            email: true
+          }
+        }
+      }
     });
     res.json(result);
   } catch (e) {
@@ -32,6 +40,13 @@ export const getCategoryById = async (req: Request, res: Response) => {
       where: {
         id: id,
       },
+      include: {
+        user: {
+          select: {
+            email: true
+          }
+        }
+      }
     });
 
     if (!result)

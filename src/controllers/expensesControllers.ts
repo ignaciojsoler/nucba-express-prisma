@@ -13,7 +13,20 @@ export const getExpenses = async (req: Request, res: Response) => {
     const result = await prisma.expense.findMany({
       where: {
         userId: user.id,
+        deleted: false
       },
+      include: {
+        user: {
+          select: {
+            email: true
+          }
+        },
+        category: {
+          select: {
+            name: true
+          }
+        }
+      }
     });
     res.json(result);
   } catch (e) {
@@ -31,6 +44,18 @@ export const getExpenseById = async (req: Request, res: Response) => {
       where: {
         id: id,
       },
+      include: {
+        user: {
+          select: {
+            email: true
+          }
+        },
+        category: {
+          select: {
+            name: true
+          }
+        }
+      }
     });
 
     if (!result)
@@ -77,7 +102,7 @@ export const createExpense = async (req: Request, res: Response) => {
 //Update
 export const updateExpense = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { amount, description, categoryId, userId }: Expense = req.body;
+  const { amount, description, categoryId, userId, deleted }: Expense = req.body;
   const user: User = res.locals.authenticatedUser;
   try {
     const expenseExists = await prisma.expense.findUnique({
@@ -104,6 +129,7 @@ export const updateExpense = async (req: Request, res: Response) => {
         categoryId,
         userId,
         updatedAt: new Date(),
+        deleted
       },
     });
     res.json({ msg: "Gasto actualizado", result });
